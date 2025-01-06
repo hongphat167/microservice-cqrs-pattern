@@ -2,6 +2,7 @@ package com.hongphat.bookservice.query.controller;
 
 import com.hongphat.bookservice.query.model.response.BookResponseModel;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -12,7 +13,6 @@ import java.util.List;
  * @createDay 05 /01/2025
  * @description Happy Coding With Phat 😊😊
  */
-
 public interface IBookQueryController {
 
 	/**
@@ -22,4 +22,13 @@ public interface IBookQueryController {
 	 */
 	@GetMapping
 	List<BookResponseModel> getAllBooks();
+
+	/**
+	 * Gets book by id.
+	 *
+	 * @param bookId the book id
+	 * @return the book by id
+	 */
+	@GetMapping("{bookId}")
+	BookResponseModel getBookById(@PathVariable String bookId);
 }

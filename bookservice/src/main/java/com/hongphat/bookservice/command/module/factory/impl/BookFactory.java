@@ -1,8 +1,9 @@
-package com.hongphat.bookservice.command.module.factory;
+package com.hongphat.bookservice.command.module.factory.impl;
 
 import com.hongphat.bookservice.command.event.BookCreateEvent;
 import com.hongphat.bookservice.command.model.BookModel;
 import com.hongphat.bookservice.command.module.entity.BookEntity;
+import com.hongphat.bookservice.command.module.factory.IBookFactory;
 import com.hongphat.bookservice.command.module.repository.IBookRepository;
 import org.springframework.stereotype.Component;
 

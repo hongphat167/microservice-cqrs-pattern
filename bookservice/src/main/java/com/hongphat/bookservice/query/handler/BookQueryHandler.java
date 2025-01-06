@@ -4,6 +4,7 @@ import com.hongphat.bookservice.command.model.BookModel;
 import com.hongphat.bookservice.command.module.factory.IBookFactory;
 import com.hongphat.bookservice.query.model.response.BookResponseModel;
 import com.hongphat.bookservice.query.queries.GetAllBookQuery;
+import com.hongphat.bookservice.query.queries.GetDetailBookQuery;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
@@ -47,5 +48,23 @@ public class BookQueryHandler {
 						.isReady(bookModel.getIsReady())
 						.build())
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Handle book response model.
+	 *
+	 * @param getDetailBookQuery the get detail book query
+	 * @return the book response model
+	 */
+	@QueryHandler
+	public BookResponseModel handle(GetDetailBookQuery getDetailBookQuery) {
+		BookModel bookModel = iBookFactory.findById(getDetailBookQuery.getBookId());
+		return BookResponseModel
+				.builder()
+				.id(bookModel.getId())
+				.author(bookModel.getAuthor())
+				.name(bookModel.getName())
+				.isReady(bookModel.getIsReady())
+				.build();
 	}
 }
