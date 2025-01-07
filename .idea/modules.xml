@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/MicroserviceProject.iml" filepath="$PROJECT_DIR$/.idea/MicroserviceProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bookservice/MicroserviceCQRSPattern.bookservice.main.iml" filepath="$PROJECT_DIR$/.idea/modules/bookservice/MicroserviceCQRSPattern.bookservice.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common-service/MicroserviceCQRSPattern.common-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common-service/MicroserviceCQRSPattern.common-service.main.iml" />
     </modules>
   </component>
 </project>

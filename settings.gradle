@@ -1,0 +1,4 @@
+rootProject.name = 'MicroserviceCQRSPattern'
+include ':bookservice'
+include ':common-service'
+include ':discoverserver'
