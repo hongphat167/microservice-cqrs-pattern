@@ -57,8 +57,13 @@ public class BookQueryHandler {
 	 * @return the book response model
 	 */
 	@QueryHandler
-	public BookResponseModel handle(GetDetailBookQuery getDetailBookQuery) {
+	public BookResponseModel handle(GetDetailBookQuery getDetailBookQuery) throws Exception {
 		BookModel bookModel = iBookFactory.findById(getDetailBookQuery.getBookId());
+
+		if(bookModel == null) {
+			throw new Exception();
+		}
+
 		return BookResponseModel
 				.builder()
 				.id(bookModel.getId())
