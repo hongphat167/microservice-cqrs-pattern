@@ -13,21 +13,39 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * Handles different types of exceptions and returns appropriate error responses.
  *
  * @author hongp
- * @createDay 07/01/2025
+ * @createDay 07 /01/2025
  */
 @ControllerAdvice
 public class ExceptionHandle {
 
+	/**
+	 * Handle business exception response entity.
+	 *
+	 * @param ex the ex
+	 * @return the response entity
+	 */
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<ErrorMessage> handleBusinessException(BusinessException ex) {
 		return buildErrorResponse(ex, ex.getErrorCode());
 	}
 
+	/**
+	 * Handle validation exception response entity.
+	 *
+	 * @param ex the ex
+	 * @return the response entity
+	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ErrorMessage> handleValidationException(MethodArgumentNotValidException ex) {
 		return buildErrorResponse(ex, ErrorCode.VALIDATION_ERROR);
 	}
 
+	/**
+	 * Handle generic exception response entity.
+	 *
+	 * @param ex the ex
+	 * @return the response entity
+	 */
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorMessage> handleGenericException(Exception ex) {
 		return buildErrorResponse(ex, ErrorCode.INTERNAL_ERROR);
