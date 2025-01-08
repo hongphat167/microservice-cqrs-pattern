@@ -1,6 +1,7 @@
 package com.hongphat.bookservice.command.controller;
 
 import com.hongphat.bookservice.command.model.request.BookModelRequest;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -18,7 +19,7 @@ public interface IBookCommandController {
 	 * @return the string
 	 */
 	@PostMapping
-	String addBook(@RequestBody BookModelRequest model);
+	String addBook(@Valid @RequestBody BookModelRequest model);
 
 	/**
 	 * Update book string.
@@ -28,7 +29,7 @@ public interface IBookCommandController {
 	 * @return the string
 	 */
 	@PutMapping("/{bookId}")
-	String updateBook(@RequestBody BookModelRequest model, @PathVariable String bookId);
+	String updateBook(@Valid @RequestBody BookModelRequest model, @PathVariable String bookId);
 
 	/**
 	 * Delete book string.
