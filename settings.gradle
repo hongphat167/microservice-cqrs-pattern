@@ -1,4 +1,6 @@
 rootProject.name = 'microservice-cqrs-pattern'
-include ':book-service'
-include ':common-service'
-include ':config-service'
+include 'book-service'
+include 'common-service'
+include 'config-service'
+include 'employee-service'
+
