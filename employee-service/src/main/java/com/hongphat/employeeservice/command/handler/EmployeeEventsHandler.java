@@ -1,10 +1,13 @@
 package com.hongphat.employeeservice.command.handler;
 
+import com.hongphat.common_service.enumerate.ErrorCode;
+import com.hongphat.common_service.exception.BusinessException;
 import com.hongphat.employeeservice.command.event.CreateEmployeeEvent;
 import com.hongphat.employeeservice.command.event.DeleteEmployeeEvent;
 import com.hongphat.employeeservice.command.event.UpdateEmployeeEvent;
 import com.hongphat.employeeservice.command.model.EmployeeModel;
 import com.hongphat.employeeservice.command.module.factory.IEmployeeFactory;
+import org.axonframework.eventhandling.DisallowReplay;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
 
@@ -35,8 +38,13 @@ public class EmployeeEventsHandler {
 	 * @param event the event
 	 */
 	@EventHandler
+	@DisallowReplay
 	public void onExecute(CreateEmployeeEvent event) {
-		employeeFactory.createAndSave(event);
+		try {
+			employeeFactory.createAndSave(event);
+		} catch (BusinessException e) {
+			throw new BusinessException(e.getErrorCode(), e.getMessage());
+		}
 	}
 
 	/**
@@ -45,17 +53,23 @@ public class EmployeeEventsHandler {
 	 * @param event the event
 	 */
 	@EventHandler
+	@DisallowReplay
 	public void onExecute(UpdateEmployeeEvent event) {
-		EmployeeModel model = EmployeeModel
-				.builder()
-				.id(event.getId())
-				.firstName(event.getFirstName())
-				.lastName(event.getLastName())
-				.kin(event.getKin())
-				.isDisciplined(event.getIsDisciplined())
-				.build();
+		try {
+			EmployeeModel model = EmployeeModel
+					.builder()
+					.id(event.getId())
+					.firstName(event.getFirstName())
+					.lastName(event.getLastName())
+					.kin(event.getKin())
+					.isDisciplined(event.getIsDisciplined())
+					.build();
 
-		employeeFactory.updateEmployee(event.getId(), model);
+			employeeFactory.updateEmployee(event.getId(), model);
+		} catch (BusinessException e) {
+			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
+		}
+
 	}
 
 	/**
@@ -64,7 +78,12 @@ public class EmployeeEventsHandler {
 	 * @param event the event
 	 */
 	@EventHandler
+	@DisallowReplay
 	public void onExecute(DeleteEmployeeEvent event) {
-		employeeFactory.deleteById(event.getId());
+		try {
+			employeeFactory.deleteById(event.getId());
+		} catch (BusinessException e) {
+			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
+		}
 	}
 }

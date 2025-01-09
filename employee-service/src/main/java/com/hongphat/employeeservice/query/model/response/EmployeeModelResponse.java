@@ -1,25 +1,22 @@
-package com.hongphat.employeeservice.command.command_handling;
+package com.hongphat.employeeservice.query.model.response;
 
 import lombok.*;
-import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 /**
- * CreateEmployeeCommand
+ * EmployeeModelResponse
  *
  * @author hongp
  * @description Happy Coding With Phat 😊😊
- * @since 8 :42 CH 08/01/2025
+ * @since 7 :36 CH 09/01/2025
  */
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateEmployeeCommand {
-	@TargetAggregateIdentifier
+public class EmployeeModelResponse {
 	private String id;
 	private String firstName;
 	private String lastName;
 	private String kin;
-	@Builder.Default
-	private Boolean isDisciplined = Boolean.TRUE;
+	private Boolean isDisciplined;
 }

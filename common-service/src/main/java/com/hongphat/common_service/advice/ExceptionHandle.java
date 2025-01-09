@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,10 +69,9 @@ public class ExceptionHandle {
 		ErrorMessage error = ErrorMessage.builder()
 				.code(errorCode.getCode())
 				.message(errorCode.getMessage())
-				.status(errorCode.getStatus())
 				.details(ex.getMessage())
-				.timestamp(LocalDate.now())
+				.timestamp(LocalDateTime.now())
 				.build();
-		return new ResponseEntity<>(error, errorCode.getStatus());
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

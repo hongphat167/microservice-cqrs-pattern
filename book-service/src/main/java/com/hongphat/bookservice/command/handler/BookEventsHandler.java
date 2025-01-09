@@ -5,6 +5,9 @@ import com.hongphat.bookservice.command.event.BookDeleteEvent;
 import com.hongphat.bookservice.command.event.BookUpdatedEvent;
 import com.hongphat.bookservice.command.model.BookModel;
 import com.hongphat.bookservice.command.module.factory.IBookFactory;
+import com.hongphat.common_service.enumerate.ErrorCode;
+import com.hongphat.common_service.exception.BusinessException;
+import org.axonframework.eventhandling.DisallowReplay;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
 
@@ -35,8 +38,13 @@ public class BookEventsHandler {
 	 * @param eventListener the event listener
 	 */
 	@EventHandler
+	@DisallowReplay
 	public void onExecute(BookCreateEvent eventListener) {
-		iBookFactory.createAndSave(eventListener);
+		try {
+			iBookFactory.createAndSave(eventListener);
+		} catch (BusinessException e) {
+			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
+		}
 	}
 
 	/**
@@ -45,15 +53,21 @@ public class BookEventsHandler {
 	 * @param eventListener the event listener
 	 */
 	@EventHandler
+	@DisallowReplay
 	public void onExecute(BookUpdatedEvent eventListener) {
-		BookModel model = BookModel
-				.builder()
-				.id(eventListener.getId())
-				.name(eventListener.getName())
-				.author(eventListener.getAuthor())
-				.isReady(eventListener.getIsReady())
-				.build();
-		iBookFactory.updateBook(eventListener.getId(), model);
+		try {
+			BookModel model = BookModel
+					.builder()
+					.id(eventListener.getId())
+					.name(eventListener.getName())
+					.author(eventListener.getAuthor())
+					.isReady(eventListener.getIsReady())
+					.build();
+			iBookFactory.updateBook(eventListener.getId(), model);
+		} catch (BusinessException e) {
+			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
+		}
+
 	}
 
 	/**
@@ -62,7 +76,13 @@ public class BookEventsHandler {
 	 * @param eventListener the event listener
 	 */
 	@EventHandler
+	@DisallowReplay
 	public void onExecute(BookDeleteEvent eventListener) {
-		iBookFactory.deleteById(eventListener.getId());
+		try {
+			iBookFactory.deleteById(eventListener.getId());
+		} catch (BusinessException e) {
+			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
+		}
+
 	}
 }

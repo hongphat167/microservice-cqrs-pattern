@@ -45,4 +45,12 @@ public interface IEmployeeFactory {
 	 * @param id the id
 	 */
 	void deleteById(String id);
+
+	/**
+	 * Find by is disciplined list.
+	 *
+	 * @param isDisciplined the is disciplined
+	 * @return the list
+	 */
+	List<EmployeeModel> findByIsDisciplined(Boolean isDisciplined);
 }

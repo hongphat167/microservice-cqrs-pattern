@@ -65,6 +65,14 @@ public class EmployeeFactory implements IEmployeeFactory {
 		employeeRepository.deleteById(id);
 	}
 
+	@Override
+	public List<EmployeeModel> findByIsDisciplined(Boolean isDisciplined) {
+		return employeeRepository.findByIsDisciplined(isDisciplined)
+				.stream()
+				.map(this::toModel)
+				.collect(Collectors.toList());
+	}
+
 	private EmployeeModel createFromEvent(CreateEmployeeEvent eventListener) {
 		if (eventListener == null) {
 			return null;
@@ -74,7 +82,7 @@ public class EmployeeFactory implements IEmployeeFactory {
 				.firstName(eventListener.getFirstName())
 				.lastName(eventListener.getLastName())
 				.kin(eventListener.getKin())
-				.isDisciplined(false)
+				.isDisciplined(eventListener.getIsDisciplined())
 				.build();
 	}
 

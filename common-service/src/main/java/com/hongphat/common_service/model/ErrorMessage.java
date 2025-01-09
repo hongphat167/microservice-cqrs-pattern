@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * The type Error message.
@@ -22,7 +21,6 @@ import java.time.LocalDate;
 public class ErrorMessage {
 	private String code;
 	private String message;
-	private HttpStatus status;
 	private String details;
-	private LocalDate timestamp;
+	private LocalDateTime timestamp;
 }

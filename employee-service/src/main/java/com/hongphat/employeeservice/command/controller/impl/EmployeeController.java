@@ -41,7 +41,6 @@ public class EmployeeController implements IEmployeeController {
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
 				.kin(request.getKin())
-				.isDisciplined(true)
 				.build();
 
 		return commandGateway.sendAndWait(command);
