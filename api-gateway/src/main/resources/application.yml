@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true    # Cho phép sử dụng lowercase trong service ID
+      routes:
+        - id: employeeservice
+          uri: lb://employeeservice
+          predicates:
+            - Path=/api/v1/employees/**
+          filters:
+            - RewritePath=/api/v1/employees/(?<segment>.*), /api/v1/employees/$\{segment}    # Giữ nguyên path khi forward
+            - name: CircuitBreaker    # Circuit breaker cho fault tolerance
+              args:
+                name: employeeService
+                fallbackUri: forward:/fallback/employeeservice
+
+# Thêm logging để debug nếu cần
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

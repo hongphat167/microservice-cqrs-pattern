@@ -8,6 +8,7 @@ ext {
     // Spring versions
     set('springBootVersion', '3.2.1')
     set('springCloudVersion', '2023.0.0')
+    set('openApiVersion', '2.3.0')
 
     // Other dependencies versions
     set('lombokVersion', '1.18.30')

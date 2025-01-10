@@ -3,4 +3,5 @@ include 'book-service'
 include 'common-service'
 include 'config-service'
 include 'employee-service'
+include 'api-gateway'
 
