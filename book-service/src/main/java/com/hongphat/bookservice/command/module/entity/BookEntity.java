@@ -1,10 +1,12 @@
 package com.hongphat.bookservice.command.module.entity;
 
+import com.hongphat.common_service.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * The type Book entity.
@@ -16,12 +18,10 @@ import lombok.*;
 @Entity
 @Table(name = "BOOK")
 @Getter
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookEntity {
-	@Id
-	private String id;
+public class BookEntity extends BaseEntity {
 
 	@Column(name = "NAME")
 	private String name;

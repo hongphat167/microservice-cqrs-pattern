@@ -20,13 +20,29 @@ public enum ErrorCode {
 	 */
 	ACCESS_DENIED("ERR_403", "Access denied"),
 	/**
+	 * The Entity not found.
+	 */
+	ENTITY_NOT_FOUND("ERR_404", "Entity not found"),
+	/**
+	 * The Invalid credentials.
+	 */
+	INVALID_CREDENTIALS("ERR_401", "Invalid credentials"),
+	/**
+	 * The Data integrity violation.
+	 */
+	DATA_INTEGRITY_VIOLATION("ERR_409", "Data integrity violation"),
+	/**
+	 * The Invalid parameter.
+	 */
+	INVALID_PARAMETER("ERR_400_1", "Invalid parameter"),
+	/**
 	 * The Internal error.
 	 */
-	INTERNAL_ERROR("ERR_500", "System is maintain"),
+	INTERNAL_ERROR("ERR_500", "Internal server error"),
 	/**
 	 * The Business error.
 	 */
-	BUSINESS_ERROR("ERR_001", "Business error");
+	BUSINESS_ERROR("ERR_400_2", "Business error");
 
 	private final String code;
 	private final String message;

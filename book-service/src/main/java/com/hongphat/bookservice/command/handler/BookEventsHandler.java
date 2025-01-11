@@ -5,6 +5,7 @@ import com.hongphat.bookservice.command.event.BookDeleteEvent;
 import com.hongphat.bookservice.command.event.BookUpdatedEvent;
 import com.hongphat.bookservice.command.model.BookModel;
 import com.hongphat.bookservice.command.module.factory.IBookFactory;
+import com.hongphat.common_service.annotation.LogExecutionTime;
 import com.hongphat.common_service.enumerate.ErrorCode;
 import com.hongphat.common_service.exception.BusinessException;
 import org.axonframework.eventhandling.DisallowReplay;

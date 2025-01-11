@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: gateway-service
   cloud:
     gateway:
       discovery:
@@ -14,13 +16,25 @@ spring:
           predicates:
             - Path=/api/v1/employees/**
           filters:
-            - RewritePath=/api/v1/employees/(?<segment>.*), /api/v1/employees/$\{segment}    # Giữ nguyên path khi forward
-            - name: CircuitBreaker    # Circuit breaker cho fault tolerance
+            - RewritePath=/api/v1/employees/(?<segment>.*), /api/v1/employees/$\{segment}
+            - name: CircuitBreaker
               args:
                 name: employeeService
                 fallbackUri: forward:/fallback/employeeservice
 
-# Thêm logging để debug nếu cần
+        # Thêm route cho bookservice
+        - id: bookservice
+          uri: lb://bookservice
+          predicates:
+            - Path=/api/v1/books/**
+          filters:
+            - RewritePath=/api/v1/books/(?<segment>.*), /api/v1/books/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: bookService
+                fallbackUri: forward:/fallback/bookservice
+
+# Logging configuration
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG

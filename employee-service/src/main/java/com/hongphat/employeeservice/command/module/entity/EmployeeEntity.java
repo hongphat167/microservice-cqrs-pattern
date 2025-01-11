@@ -1,10 +1,14 @@
 package com.hongphat.employeeservice.command.module.entity;
 
+import com.hongphat.common_service.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * EmployeeEntity
@@ -16,12 +20,10 @@ import lombok.*;
 @Entity
 @Table(name = "EMPLOYEE")
 @Getter
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class EmployeeEntity {
-	@Id
-	private String id;
+public class EmployeeEntity extends BaseEntity {
 
 	@Column(name = "FIRST_NAME")
 	private String firstName;
