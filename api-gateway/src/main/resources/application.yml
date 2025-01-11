@@ -9,7 +9,7 @@ spring:
       discovery:
         locator:
           enabled: true
-          lower-case-service-id: true    # Cho phép sử dụng lowercase trong service ID
+          lower-case-service-id: true
       routes:
         - id: employeeservice
           uri: lb://employeeservice
@@ -21,8 +21,14 @@ spring:
               args:
                 name: employeeService
                 fallbackUri: forward:/fallback/employeeservice
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@keyResolver}"
+            - name: KeyAuthFilter
 
-        # Thêm route cho bookservice
         - id: bookservice
           uri: lb://bookservice
           predicates:
@@ -33,8 +39,21 @@ spring:
               args:
                 name: bookService
                 fallbackUri: forward:/fallback/bookservice
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@keyResolver}"
+            - name: KeyAuthFilter
 
-# Logging configuration
+  # Add Redis configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: mypassword
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
@@ -48,3 +67,5 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
+
+apiKey: hongphat
