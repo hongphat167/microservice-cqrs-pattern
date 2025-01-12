@@ -23,6 +23,20 @@ spring:
     consumer:
       group-id: book-group
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hogphat1607@gmail.com
+    password: qpfmilrxltrdorhr
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        transport:
+          protocol: smtp
+
 server:
   port: 9001
 

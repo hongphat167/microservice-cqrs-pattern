@@ -14,6 +14,7 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
 public class CreateBookCommand {
 	@TargetAggregateIdentifier
 	private String id;
