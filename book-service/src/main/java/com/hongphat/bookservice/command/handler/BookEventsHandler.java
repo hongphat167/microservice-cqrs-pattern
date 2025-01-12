@@ -4,8 +4,7 @@ import com.hongphat.bookservice.command.event.BookCreateEvent;
 import com.hongphat.bookservice.command.event.BookDeleteEvent;
 import com.hongphat.bookservice.command.event.BookUpdatedEvent;
 import com.hongphat.bookservice.command.model.BookModel;
-import com.hongphat.bookservice.command.module.factory.IBookFactory;
-import com.hongphat.common_service.annotation.LogExecutionTime;
+import com.hongphat.bookservice.module.factory.IBookFactory;
 import com.hongphat.common_service.enumerate.ErrorCode;
 import com.hongphat.common_service.exception.BusinessException;
 import org.axonframework.eventhandling.DisallowReplay;
@@ -42,7 +41,7 @@ public class BookEventsHandler {
 	@DisallowReplay
 	public void onExecute(BookCreateEvent eventListener) {
 		try {
-			iBookFactory.createAndSave(eventListener);
+			iBookFactory.create(eventListener);
 		} catch (BusinessException e) {
 			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}
@@ -64,7 +63,7 @@ public class BookEventsHandler {
 					.author(eventListener.getAuthor())
 					.isReady(eventListener.getIsReady())
 					.build();
-			iBookFactory.updateBook(eventListener.getId(), model);
+			iBookFactory.update(eventListener.getId(), model);
 		} catch (BusinessException e) {
 			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}
@@ -80,7 +79,7 @@ public class BookEventsHandler {
 	@DisallowReplay
 	public void onExecute(BookDeleteEvent eventListener) {
 		try {
-			iBookFactory.deleteById(eventListener.getId());
+			iBookFactory.delete(eventListener.getId());
 		} catch (BusinessException e) {
 			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}

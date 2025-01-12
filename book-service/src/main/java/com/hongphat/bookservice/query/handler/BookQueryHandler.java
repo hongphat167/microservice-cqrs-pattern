@@ -1,7 +1,7 @@
 package com.hongphat.bookservice.query.handler;
 
 import com.hongphat.bookservice.command.model.BookModel;
-import com.hongphat.bookservice.command.module.factory.IBookFactory;
+import com.hongphat.bookservice.module.factory.IBookFactory;
 import com.hongphat.bookservice.query.model.response.BookResponseModel;
 import com.hongphat.bookservice.query.queries.GetAllBookQuery;
 import com.hongphat.bookservice.query.queries.GetDetailBookQuery;
@@ -39,7 +39,7 @@ public class BookQueryHandler {
 	 */
 	@QueryHandler
 	public List<BookResponseModel> handle(GetAllBookQuery getAllBookQuery) {
-		List<BookModel> bookModels = iBookFactory.findAll();
+		List<BookModel> bookModels = iBookFactory.getList();
 		return bookModels.stream()
 				.map(bookModel -> BookResponseModel.builder()
 						.id(bookModel.getId())
@@ -58,7 +58,7 @@ public class BookQueryHandler {
 	 */
 	@QueryHandler
 	public BookResponseModel handle(GetDetailBookQuery getDetailBookQuery) throws Exception {
-		BookModel bookModel = iBookFactory.findById(getDetailBookQuery.getBookId());
+		BookModel bookModel = iBookFactory.get(getDetailBookQuery.getBookId());
 
 		if(bookModel == null) {
 			throw new Exception();

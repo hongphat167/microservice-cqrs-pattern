@@ -1,11 +1,11 @@
-package com.hongphat.employeeservice.command.module.factory.impl;
+package com.hongphat.employeeservice.module.factory.impl;
 
 import com.hongphat.common_service.common.BaseFactory;
 import com.hongphat.employeeservice.command.event.CreateEmployeeEvent;
 import com.hongphat.employeeservice.command.model.EmployeeModel;
-import com.hongphat.employeeservice.command.module.entity.EmployeeEntity;
-import com.hongphat.employeeservice.command.module.factory.IEmployeeFactory;
-import com.hongphat.employeeservice.command.module.repository.IEmployeeRepository;
+import com.hongphat.employeeservice.module.entity.EmployeeEntity;
+import com.hongphat.employeeservice.module.factory.IEmployeeFactory;
+import com.hongphat.employeeservice.module.repository.IEmployeeRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,21 +18,24 @@ import java.util.List;
  * @since 8 :53 CH 08/01/2025
  */
 @Component
-public class EmployeeFactory extends BaseFactory<EmployeeEntity, EmployeeModel> implements IEmployeeFactory {
+public class EmployeeFactory extends BaseFactory<
+		EmployeeEntity, EmployeeModel,
+		IEmployeeRepository,
+		String
+		> implements IEmployeeFactory {
 
-	private final IEmployeeRepository employeeRepository;
 
 	/**
 	 * Instantiates a new Employee factory.
 	 *
-	 * @param employeeRepository the employee repository
+	 * @param repository the repository
 	 */
-	protected EmployeeFactory(IEmployeeRepository employeeRepository) {
-		this.employeeRepository = employeeRepository;
+	protected EmployeeFactory(IEmployeeRepository repository) {
+		super(repository);
 	}
 
 	@Override
-	public void createAndSave(CreateEmployeeEvent eventListener) {
+	public void create(CreateEmployeeEvent eventListener) {
 		if (isNull(eventListener)) {
 			return;
 		}
@@ -44,35 +47,35 @@ public class EmployeeFactory extends BaseFactory<EmployeeEntity, EmployeeModel> 
 				.isDisciplined(eventListener.getIsDisciplined())
 				.build();
 
-		employeeRepository.save(toEntity(model));
+		repository.save(toEntity(model));
 	}
 
 	@Override
-	public EmployeeModel findById(String id) {
-		return toModelOptional(employeeRepository.findById(id).orElse(null))
+	public EmployeeModel get(String id) {
+		return toModelOptional(repository.findById(id).orElse(null))
 				.orElse(null);
 	}
 
 	@Override
-	public List<EmployeeModel> findAll() {
-		return toModel(employeeRepository.findAll());
+	public List<EmployeeModel> getList() {
+		return toModel(repository.findAll());
 	}
 
 	@Override
-	public void updateEmployee(String id, EmployeeModel model) {
-		employeeRepository.findById(id)
+	public void update(String id, EmployeeModel model) {
+		repository.findById(id)
 				.map(existingEntity -> updateEntity(existingEntity, model))
-				.ifPresent(employeeRepository::save);
+				.ifPresent(repository::save);
 	}
 
 	@Override
-	public void deleteById(String id) {
-		employeeRepository.deleteById(id);
+	public void delete(String id) {
+		repository.deleteById(id);
 	}
 
 	@Override
 	public List<EmployeeModel> findByIsDisciplined(Boolean isDisciplined) {
-		return toModel(employeeRepository.findByIsDisciplined(isDisciplined));
+		return toModel(repository.findByIsDisciplined(isDisciplined));
 	}
 
 	@Override

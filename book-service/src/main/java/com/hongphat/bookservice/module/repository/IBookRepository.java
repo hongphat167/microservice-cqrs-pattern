@@ -1,6 +1,6 @@
-package com.hongphat.bookservice.command.module.repository;
+package com.hongphat.bookservice.module.repository;
 
-import com.hongphat.bookservice.command.module.entity.BookEntity;
+import com.hongphat.bookservice.module.entity.BookEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

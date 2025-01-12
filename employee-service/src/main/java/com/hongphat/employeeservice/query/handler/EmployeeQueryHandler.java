@@ -3,7 +3,7 @@ package com.hongphat.employeeservice.query.handler;
 import com.hongphat.common_service.enumerate.ErrorCode;
 import com.hongphat.common_service.exception.BusinessException;
 import com.hongphat.employeeservice.command.model.EmployeeModel;
-import com.hongphat.employeeservice.command.module.factory.IEmployeeFactory;
+import com.hongphat.employeeservice.module.factory.IEmployeeFactory;
 import com.hongphat.employeeservice.query.model.response.EmployeeModelResponse;
 import com.hongphat.employeeservice.query.queries.GetEmployeeByIsDisciplinedQuery;
 import com.hongphat.employeeservice.query.queries.GetEmployeeDetailQuery;
@@ -71,7 +71,7 @@ public class EmployeeQueryHandler {
 	@QueryHandler
 	public EmployeeModelResponse handle(GetEmployeeDetailQuery getEmployeeDetailQuery) {
 		try {
-			EmployeeModel employeeModel = employeeFactory.findById(
+			EmployeeModel employeeModel = employeeFactory.get(
 					getEmployeeDetailQuery.getId()
 			);
 

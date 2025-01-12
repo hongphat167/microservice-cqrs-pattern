@@ -1,4 +1,4 @@
-package com.hongphat.employeeservice.command.module.entity;
+package com.hongphat.borrowservice.module.entity;
 
 import com.hongphat.common_service.common.BaseEntity;
 import jakarta.persistence.Column;
@@ -10,30 +10,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 /**
- * EmployeeEntity
+ * BorrowEntity
  *
  * @author hongp
  * @description Happy Coding With Phat 😊😊
- * @since 8 :48 CH 08/01/2025
+ * @since 1 :43 CH 12/01/2025
  */
 @Entity
-@Table(name = "EMPLOYEE")
+@Table(name = "BORROW")
 @Getter
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class EmployeeEntity extends BaseEntity {
+public class BorrowEntity extends BaseEntity {
 
-	@Column(name = "FIRST_NAME")
-	private String firstName;
+	@Column(name = "BOOK_ID")
+	private String bookId;
 
-	@Column(name = "LAST_NAME")
-	private String lastName;
+	@Column(name = "EMPLOYEE_ID")
+	private String employeeId;
 
-	@Column(name = "KIN")
-	private String kin;
+	@Column(name = "BORROW_DATE")
+	private LocalDateTime borrowDate;
 
-	@Column(name = "IS_DISCIPLINED")
-	private Boolean isDisciplined;
+	@Column(name = "RETURN_DATE")
+	private LocalDateTime returnDate;
 }

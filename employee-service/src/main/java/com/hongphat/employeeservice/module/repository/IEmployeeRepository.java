@@ -1,6 +1,6 @@
-package com.hongphat.employeeservice.command.module.repository;
+package com.hongphat.employeeservice.module.repository;
 
-import com.hongphat.employeeservice.command.module.entity.EmployeeEntity;
+import com.hongphat.employeeservice.module.entity.EmployeeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

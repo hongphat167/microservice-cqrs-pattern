@@ -1,4 +1,4 @@
-package com.hongphat.bookservice.command.module.entity;
+package com.hongphat.bookservice.module.entity;
 
 import com.hongphat.common_service.common.BaseEntity;
 import jakarta.persistence.Column;

@@ -1,19 +1,38 @@
 package com.hongphat.common_service.common;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * BaseFactory
+ * BaseFactory with integrated Repository
  *
- * @param <E> the type parameter
- * @param <M> the type parameter
- * @author hongp
- * @description Happy Coding With Phat 😊😊
- * @since 10 :15 SA 12/01/2025
+ * @param <E>  Entity type
+ * @param <M>  Model type
+ * @param <R>  Repository type
+ * @param <ID> the type parameter
  */
-public abstract class BaseFactory<E, M> {
+public abstract class BaseFactory<
+		E extends BaseEntity, M,
+		R extends JpaRepository<E, ID>, ID
+		> {
+
+	/**
+	 * The Repository.
+	 */
+	protected final R repository;
+
+	/**
+	 * Instantiates a new Base factory.
+	 *
+	 * @param repository the repository
+	 */
+	protected BaseFactory(R repository) {
+		this.repository = repository;
+	}
+
 	/**
 	 * To model m.
 	 *
@@ -30,29 +49,12 @@ public abstract class BaseFactory<E, M> {
 	 */
 	public abstract E toEntity(M model);
 
-
 	/**
-	 * Update entity với data từ model
+	 * Update e.
 	 *
-	 * @param existingEntity entity hiện tại cần update
-	 * @param model          model chứa data mới
-	 * @return entity đã được update
-	 */
-	protected E updateEntity(E existingEntity, M model) {
-		if (isNull(existingEntity) || isNull(model)) {
-			return existingEntity;
-		}
-		// Tạo entity mới với data từ model
-		return update(existingEntity, model);
-	}
-
-	/**
-	 * Merge data từ model vào entity.
-	 * Các lớp con có thể override để cung cấp logic merge cụ thể
-	 *
-	 * @param existingEntity entity hiện tại
-	 * @param model          model chứa data mới
-	 * @return entity sau khi merge
+	 * @param existingEntity the existing entity
+	 * @param model          the model
+	 * @return the e
 	 */
 	protected abstract E update(E existingEntity, M model);
 
@@ -62,9 +64,22 @@ public abstract class BaseFactory<E, M> {
 	 * @param obj the obj
 	 * @return the boolean
 	 */
-	// Phương thức protected helper để kiểm tra null
 	protected boolean isNull(Object obj) {
 		return obj == null;
+	}
+
+	/**
+	 * Update entity e.
+	 *
+	 * @param existingEntity the existing entity
+	 * @param model          the model
+	 * @return the e
+	 */
+	protected E updateEntity(E existingEntity, M model) {
+		if (isNull(existingEntity) || isNull(model)) {
+			return existingEntity;
+		}
+		return update(existingEntity, model);
 	}
 
 	/**
@@ -73,7 +88,6 @@ public abstract class BaseFactory<E, M> {
 	 * @param entities the entities
 	 * @return the list
 	 */
-	// Các phương thức xử lý collection
 	public List<M> toModel(List<E> entities) {
 		if (isNull(entities)) {
 			return null;
@@ -104,7 +118,6 @@ public abstract class BaseFactory<E, M> {
 	 * @param entity the entity
 	 * @return the optional
 	 */
-	// Optional wrapper methods để xử lý null safety
 	public Optional<M> toModelOptional(E entity) {
 		return Optional.ofNullable(toModel(entity));
 	}

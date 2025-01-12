@@ -6,7 +6,7 @@ import com.hongphat.employeeservice.command.event.CreateEmployeeEvent;
 import com.hongphat.employeeservice.command.event.DeleteEmployeeEvent;
 import com.hongphat.employeeservice.command.event.UpdateEmployeeEvent;
 import com.hongphat.employeeservice.command.model.EmployeeModel;
-import com.hongphat.employeeservice.command.module.factory.IEmployeeFactory;
+import com.hongphat.employeeservice.module.factory.IEmployeeFactory;
 import org.axonframework.eventhandling.DisallowReplay;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,7 @@ public class EmployeeEventsHandler {
 	@DisallowReplay
 	public void onExecute(CreateEmployeeEvent event) {
 		try {
-			employeeFactory.createAndSave(event);
+			employeeFactory.create(event);
 		} catch (BusinessException e) {
 			throw new BusinessException(e.getErrorCode(), e.getMessage());
 		}
@@ -65,7 +65,7 @@ public class EmployeeEventsHandler {
 					.isDisciplined(event.getIsDisciplined())
 					.build();
 
-			employeeFactory.updateEmployee(event.getId(), model);
+			employeeFactory.update(event.getId(), model);
 		} catch (BusinessException e) {
 			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}
@@ -81,7 +81,7 @@ public class EmployeeEventsHandler {
 	@DisallowReplay
 	public void onExecute(DeleteEmployeeEvent event) {
 		try {
-			employeeFactory.deleteById(event.getId());
+			employeeFactory.delete(event.getId());
 		} catch (BusinessException e) {
 			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}

@@ -5,4 +5,5 @@ include 'config-service'
 include 'employee-service'
 include 'api-gateway'
 include 'notification-service'
+include 'borrow-service'
 
