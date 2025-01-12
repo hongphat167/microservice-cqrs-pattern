@@ -18,6 +18,11 @@ spring:
     init:
       mode: always
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
+    consumer:
+      group-id: book-group
+
 server:
   port: 9001
 

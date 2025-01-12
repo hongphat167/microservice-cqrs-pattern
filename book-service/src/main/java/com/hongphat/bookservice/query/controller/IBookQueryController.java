@@ -3,6 +3,8 @@ package com.hongphat.bookservice.query.controller;
 import com.hongphat.bookservice.query.model.response.BookResponseModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -31,4 +33,8 @@ public interface IBookQueryController {
 	 */
 	@GetMapping("{bookId}")
 	BookResponseModel getBookById(@PathVariable String bookId);
+
+	@PostMapping("/sendMessage")
+	public void sendMessage(@RequestBody String message);
+
 }

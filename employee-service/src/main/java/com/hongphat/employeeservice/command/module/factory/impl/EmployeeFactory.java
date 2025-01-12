@@ -1,5 +1,6 @@
 package com.hongphat.employeeservice.command.module.factory.impl;
 
+import com.hongphat.common_service.common.BaseFactory;
 import com.hongphat.employeeservice.command.event.CreateEmployeeEvent;
 import com.hongphat.employeeservice.command.model.EmployeeModel;
 import com.hongphat.employeeservice.command.module.entity.EmployeeEntity;
@@ -8,7 +9,6 @@ import com.hongphat.employeeservice.command.module.repository.IEmployeeRepositor
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * EmployeeFactory
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @since 8 :53 CH 08/01/2025
  */
 @Component
-public class EmployeeFactory implements IEmployeeFactory {
+public class EmployeeFactory extends BaseFactory<EmployeeEntity, EmployeeModel> implements IEmployeeFactory {
 
 	private final IEmployeeRepository employeeRepository;
 
@@ -33,31 +33,36 @@ public class EmployeeFactory implements IEmployeeFactory {
 
 	@Override
 	public void createAndSave(CreateEmployeeEvent eventListener) {
-		EmployeeModel model = createFromEvent(eventListener);
-		EmployeeEntity entity = toEntity(model);
-		toModel(employeeRepository.save(entity));
+		if (isNull(eventListener)) {
+			return;
+		}
+		EmployeeModel model = EmployeeModel.builder()
+				.id(eventListener.getId())
+				.firstName(eventListener.getFirstName())
+				.lastName(eventListener.getLastName())
+				.kin(eventListener.getKin())
+				.isDisciplined(eventListener.getIsDisciplined())
+				.build();
+
+		employeeRepository.save(toEntity(model));
 	}
 
 	@Override
 	public EmployeeModel findById(String id) {
-		EmployeeEntity entity = employeeRepository.findById(id).orElse(null);
-		return toModel(entity);
+		return toModelOptional(employeeRepository.findById(id).orElse(null))
+				.orElse(null);
 	}
 
 	@Override
 	public List<EmployeeModel> findAll() {
-		return employeeRepository.findAll()
-				.stream()
-				.map(this::toModel)
-				.collect(Collectors.toList());
+		return toModel(employeeRepository.findAll());
 	}
 
 	@Override
 	public void updateEmployee(String id, EmployeeModel model) {
 		employeeRepository.findById(id)
-				.map(existingEntity -> update(existingEntity, model))
-				.map(employeeRepository::save)
-				.map(this::toModel);
+				.map(existingEntity -> updateEntity(existingEntity, model))
+				.ifPresent(employeeRepository::save);
 	}
 
 	@Override
@@ -67,27 +72,12 @@ public class EmployeeFactory implements IEmployeeFactory {
 
 	@Override
 	public List<EmployeeModel> findByIsDisciplined(Boolean isDisciplined) {
-		return employeeRepository.findByIsDisciplined(isDisciplined)
-				.stream()
-				.map(this::toModel)
-				.collect(Collectors.toList());
+		return toModel(employeeRepository.findByIsDisciplined(isDisciplined));
 	}
 
-	private EmployeeModel createFromEvent(CreateEmployeeEvent eventListener) {
-		if (eventListener == null) {
-			return null;
-		}
-		return EmployeeModel.builder()
-				.id(eventListener.getId())
-				.firstName(eventListener.getFirstName())
-				.lastName(eventListener.getLastName())
-				.kin(eventListener.getKin())
-				.isDisciplined(eventListener.getIsDisciplined())
-				.build();
-	}
-
-	private EmployeeModel toModel(EmployeeEntity entity) {
-		if (entity == null) {
+	@Override
+	public EmployeeModel toModel(EmployeeEntity entity) {
+		if (isNull(entity)) {
 			return null;
 		}
 		return EmployeeModel.builder()
@@ -99,8 +89,9 @@ public class EmployeeFactory implements IEmployeeFactory {
 				.build();
 	}
 
-	private EmployeeEntity toEntity(EmployeeModel model) {
-		if (model == null) {
+	@Override
+	public EmployeeEntity toEntity(EmployeeModel model) {
+		if (isNull(model)) {
 			return null;
 		}
 		return EmployeeEntity.builder()
@@ -112,11 +103,8 @@ public class EmployeeFactory implements IEmployeeFactory {
 				.build();
 	}
 
-	private EmployeeEntity update(EmployeeEntity existingEntity, EmployeeModel model) {
-		if (existingEntity == null || model == null) {
-			return existingEntity;
-		}
-
+	@Override
+	protected EmployeeEntity update(EmployeeEntity existingEntity, EmployeeModel model) {
 		return existingEntity.toBuilder()
 				.firstName(model.getFirstName())
 				.lastName(model.getLastName())

@@ -1,11 +1,10 @@
 spring:
   application:
-    name: common-service
-
+    name: notificationservice
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
     consumer:
-      group-id: ${KAFKA_GROUP_ID:default-group}
+      group-id: notification-group
 
   mail:
     host: smtp.gmail.com
@@ -20,3 +19,6 @@ spring:
             enable: true
         transport:
           protocol: smtp
+
+server:
+  port: 9003

@@ -4,6 +4,7 @@ import com.hongphat.bookservice.query.controller.IBookQueryController;
 import com.hongphat.bookservice.query.model.response.BookResponseModel;
 import com.hongphat.bookservice.query.queries.GetAllBookQuery;
 import com.hongphat.bookservice.query.queries.GetDetailBookQuery;
+import com.hongphat.common_service.service.KafkaService;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,14 +24,18 @@ import java.util.List;
 public class BookQueryController implements IBookQueryController {
 
 	private final QueryGateway queryGateway;
+	private final KafkaService kafkaService;
 
 	/**
 	 * Instantiates a new Book query controller.
 	 *
 	 * @param queryGateway the query gateway
+	 * @param kafkaService the kafka service
 	 */
-	public BookQueryController(QueryGateway queryGateway) {
+	protected BookQueryController(QueryGateway queryGateway,
+	                              KafkaService kafkaService) {
 		this.queryGateway = queryGateway;
+		this.kafkaService = kafkaService;
 	}
 
 	@Override
@@ -52,5 +57,10 @@ public class BookQueryController implements IBookQueryController {
 		return queryGateway.query(
 				query, ResponseTypes.instanceOf(BookResponseModel.class)
 		).join();
+	}
+
+	@Override
+	public void sendMessage(String message) {
+		kafkaService.sendMessage("test", message);
 	}
 }

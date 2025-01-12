@@ -5,16 +5,21 @@ import com.hongphat.bookservice.command.model.BookModel;
 import com.hongphat.bookservice.command.module.entity.BookEntity;
 import com.hongphat.bookservice.command.module.factory.IBookFactory;
 import com.hongphat.bookservice.command.module.repository.IBookRepository;
+import com.hongphat.common_service.common.BaseFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The type Book factory.
+ *
+ * @author hongp
+ * @createDay 05/01/2025
+ * @description Happy Coding With Phat 😊😊
  */
 @Component
-public class BookFactory implements IBookFactory {
+public class BookFactory extends BaseFactory<BookEntity, BookModel>
+		implements IBookFactory {
 
 	private final IBookRepository bookRepository;
 
@@ -23,37 +28,41 @@ public class BookFactory implements IBookFactory {
 	 *
 	 * @param bookRepository the book repository
 	 */
-	public BookFactory(IBookRepository bookRepository) {
+	protected BookFactory(IBookRepository bookRepository) {
 		this.bookRepository = bookRepository;
 	}
 
 	@Override
 	public void createAndSave(BookCreateEvent eventListener) {
-		BookModel model = createFromEvent(eventListener);
-		BookEntity entity = toEntity(model);
-		toModel(bookRepository.save(entity));
+		if (eventListener == null) {
+			return;
+		}
+		BookModel model = BookModel.builder()
+				.id(eventListener.getId())
+				.name(eventListener.getName())
+				.author(eventListener.getAuthor())
+				.isReady(true)
+				.build();
+
+		bookRepository.save(toEntity(model));
 	}
 
 	@Override
 	public BookModel findById(String id) {
-		BookEntity entity = bookRepository.findById(id).orElse(null);
-		return toModel(entity);
+		return toModelOptional(bookRepository.findById(id).orElse(null))
+				.orElse(null);
 	}
 
 	@Override
 	public List<BookModel> findAll() {
-		return bookRepository.findAll()
-				.stream()
-				.map(this::toModel)
-				.collect(Collectors.toList());
+		return toModel(bookRepository.findAll());
 	}
 
 	@Override
 	public void updateBook(String id, BookModel model) {
 		bookRepository.findById(id)
-				.map(existingEntity -> update(existingEntity, model))
-				.map(bookRepository::save)
-				.map(this::toModel);
+				.map(existingEntity -> updateEntity(existingEntity, model))
+				.ifPresent(bookRepository::save);
 	}
 
 	@Override
@@ -61,20 +70,9 @@ public class BookFactory implements IBookFactory {
 		bookRepository.deleteById(id);
 	}
 
-	private BookModel createFromEvent(BookCreateEvent eventListener) {
-		if (eventListener == null) {
-			return null;
-		}
-		return BookModel.builder()
-				.id(eventListener.getId())
-				.name(eventListener.getName())
-				.author(eventListener.getAuthor())
-				.isReady(true)
-				.build();
-	}
-
-	private BookModel toModel(BookEntity entity) {
-		if (entity == null) {
+	@Override
+	public BookModel toModel(BookEntity entity) {
+		if (isNull(entity)) {
 			return null;
 		}
 		return BookModel.builder()
@@ -85,8 +83,9 @@ public class BookFactory implements IBookFactory {
 				.build();
 	}
 
-	private BookEntity toEntity(BookModel model) {
-		if (model == null) {
+	@Override
+	public BookEntity toEntity(BookModel model) {
+		if (isNull(model)) {
 			return null;
 		}
 		return BookEntity.builder()
@@ -104,11 +103,8 @@ public class BookFactory implements IBookFactory {
 	 * @param model          the book model containing updated data
 	 * @return the updated book entity
 	 */
-	private BookEntity update(BookEntity existingEntity, BookModel model) {
-		if (existingEntity == null || model == null) {
-			return existingEntity;
-		}
-
+	@Override
+	protected BookEntity update(BookEntity existingEntity, BookModel model) {
 		return existingEntity.toBuilder()
 				.name(model.getName())
 				.author(model.getAuthor())
