@@ -3,6 +3,7 @@ package com.hongphat.employeeservice.module.factory;
 import com.hongphat.common_service.common.BaseCrudFactory;
 import com.hongphat.employeeservice.command.event.CreateEmployeeEvent;
 import com.hongphat.employeeservice.command.model.EmployeeModel;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 

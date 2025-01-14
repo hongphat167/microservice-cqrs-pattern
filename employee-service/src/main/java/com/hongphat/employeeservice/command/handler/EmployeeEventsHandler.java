@@ -39,11 +39,11 @@ public class EmployeeEventsHandler {
 	 */
 	@EventHandler
 	@DisallowReplay
-	public void onExecute(CreateEmployeeEvent event) {
+	public void handle(CreateEmployeeEvent event) {
 		try {
 			employeeFactory.create(event);
 		} catch (BusinessException e) {
-			throw new BusinessException(e.getErrorCode(), e.getMessage());
+			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}
 	}
 
@@ -54,7 +54,7 @@ public class EmployeeEventsHandler {
 	 */
 	@EventHandler
 	@DisallowReplay
-	public void onExecute(UpdateEmployeeEvent event) {
+	public void handle(UpdateEmployeeEvent event) {
 		try {
 			EmployeeModel model = EmployeeModel
 					.builder()
@@ -79,7 +79,7 @@ public class EmployeeEventsHandler {
 	 */
 	@EventHandler
 	@DisallowReplay
-	public void onExecute(DeleteEmployeeEvent event) {
+	public void handle(DeleteEmployeeEvent event) {
 		try {
 			employeeFactory.delete(event.getId());
 		} catch (BusinessException e) {

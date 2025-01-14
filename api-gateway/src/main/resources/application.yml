@@ -47,6 +47,24 @@ spring:
                 key-resolver: "#{@keyResolver}"
             - name: KeyAuthFilter
 
+        - id: borrowservice
+          uri: lb://borrowservice
+          predicates:
+            - Path=/api/v1/borrows/**
+          filters:
+            - RewritePath=/api/v1/borrows/(?<segment>.*), /api/v1/borrows/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: borrowService
+                fallbackUri: forward:/fallback/borrowservice
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@keyResolver}"
+            - name: KeyAuthFilter
+
   # Add Redis configuration
   data:
     redis:

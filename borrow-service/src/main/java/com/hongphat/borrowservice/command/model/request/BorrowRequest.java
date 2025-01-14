@@ -18,5 +18,4 @@ import java.time.LocalDateTime;
 public class BorrowRequest {
 	private String bookId;
 	private String employeeId;
-	private LocalDateTime borrowDate;
 }

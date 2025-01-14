@@ -2,6 +2,8 @@ package com.hongphat.employeeservice.module.repository;
 
 import com.hongphat.employeeservice.module.entity.EmployeeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +24,11 @@ public interface IEmployeeRepository extends JpaRepository<EmployeeEntity, Strin
 	 * @return the list
 	 */
 	List<EmployeeEntity> findByIsDisciplined(Boolean isDisciplined);
+
+	@Query(value = """
+
+SELECT * FORM employee
+
+""", nativeQuery = true)
+	String getAllByIsDisciplined(@Param("query") Boolean isDisciplined);
 }

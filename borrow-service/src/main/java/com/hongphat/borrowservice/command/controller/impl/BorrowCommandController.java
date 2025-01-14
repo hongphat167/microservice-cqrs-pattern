@@ -7,6 +7,7 @@ import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -37,7 +38,7 @@ public class BorrowCommandController implements IBorrowCommandController {
 				.id(UUID.randomUUID().toString())
 				.bookId(request.getBookId())
 				.employeeId(request.getEmployeeId())
-				.borrowDate(request.getBorrowDate())
+				.borrowDate(LocalDateTime.now())
 				.build();
 
 		return commandGateway.sendAndWait(command);

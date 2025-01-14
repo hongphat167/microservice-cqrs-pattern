@@ -35,13 +35,13 @@ public class BookEventsHandler {
 	/**
 	 * On execute.
 	 *
-	 * @param eventListener the event listener
+	 * @param event the event
 	 */
 	@EventHandler
 	@DisallowReplay
-	public void onExecute(BookCreateEvent eventListener) {
+	public void handle(BookCreateEvent event) {
 		try {
-			iBookFactory.create(eventListener);
+			iBookFactory.create(event);
 		} catch (BusinessException e) {
 			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}
@@ -50,20 +50,20 @@ public class BookEventsHandler {
 	/**
 	 * On execute.
 	 *
-	 * @param eventListener the event listener
+	 * @param event the event
 	 */
 	@EventHandler
 	@DisallowReplay
-	public void onExecute(BookUpdatedEvent eventListener) {
+	public void handle(BookUpdatedEvent event) {
 		try {
 			BookModel model = BookModel
 					.builder()
-					.id(eventListener.getId())
-					.name(eventListener.getName())
-					.author(eventListener.getAuthor())
-					.isReady(eventListener.getIsReady())
+					.id(event.getId())
+					.name(event.getName())
+					.author(event.getAuthor())
+					.isReady(event.getIsReady())
 					.build();
-			iBookFactory.update(eventListener.getId(), model);
+			iBookFactory.update(event.getId(), model);
 		} catch (BusinessException e) {
 			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}
@@ -73,13 +73,13 @@ public class BookEventsHandler {
 	/**
 	 * On execute.
 	 *
-	 * @param eventListener the event listener
+	 * @param event the event
 	 */
 	@EventHandler
 	@DisallowReplay
-	public void onExecute(BookDeleteEvent eventListener) {
+	public void handle(BookDeleteEvent event) {
 		try {
-			iBookFactory.delete(eventListener.getId());
+			iBookFactory.delete(event.getId());
 		} catch (BusinessException e) {
 			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}

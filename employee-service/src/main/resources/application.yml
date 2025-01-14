@@ -18,6 +18,26 @@ spring:
     init:
       mode: always
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
+    consumer:
+      group-id: employee-group
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hogphat1607@gmail.com
+    password: qpfmilrxltrdorhr
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        transport:
+          protocol: smtp
+
+
 server:
   port: 8283
 

@@ -5,6 +5,8 @@ import com.hongphat.bookservice.module.factory.IBookFactory;
 import com.hongphat.bookservice.query.model.response.BookResponseModel;
 import com.hongphat.bookservice.query.queries.GetAllBookQuery;
 import com.hongphat.bookservice.query.queries.GetDetailBookQuery;
+import com.hongphat.common_service.enumerate.ErrorCode;
+import com.hongphat.common_service.exception.BusinessException;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.stereotype.Component;
 
@@ -61,7 +63,7 @@ public class BookQueryHandler {
 		BookModel bookModel = iBookFactory.get(getDetailBookQuery.getBookId());
 
 		if(bookModel == null) {
-			throw new Exception();
+			throw new BusinessException(ErrorCode.BUSINESS_ERROR);
 		}
 
 		return BookResponseModel
