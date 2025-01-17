@@ -1,6 +1,7 @@
 package com.hongphat.bookservice.module.factory;
 
 import com.hongphat.bookservice.command.event.BookCreateEvent;
+import com.hongphat.bookservice.command.event.BookUpdatedStatusEvent;
 import com.hongphat.bookservice.command.model.BookModel;
 import com.hongphat.common_service.common.BaseCrudFactory;
 
@@ -13,4 +14,5 @@ import com.hongphat.common_service.common.BaseCrudFactory;
  * @description Happy Coding With Phat 😊😊
  */
 public interface IBookFactory extends BaseCrudFactory<BookModel, BookCreateEvent>  {
+	void updateIsRead(BookUpdatedStatusEvent event);
 }

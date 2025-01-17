@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan({"com.hongphat.bookservice","com.hongphat.common_service"})
+@ComponentScan({"com.hongphat.bookservice", "com.hongphat.common_service"})
 public class BookServiceApplication {
 
 	public static void main(String[] args) {

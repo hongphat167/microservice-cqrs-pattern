@@ -1,7 +1,9 @@
 package com.hongphat.borrowservice.command.aggregate;
 
 import com.hongphat.borrowservice.command.command_handling.CreateBorrowCommand;
+import com.hongphat.borrowservice.command.command_handling.DeleteBorrowCommand;
 import com.hongphat.borrowservice.command.event.CreateBorrowEvent;
+import com.hongphat.borrowservice.command.event.DeleteBorrowEvent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,5 +62,29 @@ public class BorrowAggregate {
 		this.bookId = event.getBookId();
 		this.employeeId = event.getEmployeeId();
 		this.borrowDate = event.getBorrowDate();
+	}
+
+	/**
+	 * Handle.
+	 *
+	 * @param command the command
+	 */
+	@CommandHandler
+	public void handle(DeleteBorrowCommand command) {
+		DeleteBorrowEvent event = DeleteBorrowEvent.builder()
+				.id(command.getId())
+				.build();
+
+		AggregateLifecycle.apply(event);
+	}
+
+	/**
+	 * On.
+	 *
+	 * @param event the event
+	 */
+	@EventSourcingHandler
+	public void on(DeleteBorrowEvent event) {
+		this.id = event.getId();
 	}
 }

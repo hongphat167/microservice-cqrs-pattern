@@ -3,9 +3,11 @@ package com.hongphat.bookservice.command.aggregate;
 import com.hongphat.bookservice.command.command_handling.CreateBookCommand;
 import com.hongphat.bookservice.command.command_handling.DeleteBookCommand;
 import com.hongphat.bookservice.command.command_handling.UpdateBookCommand;
+import com.hongphat.bookservice.command.command_handling.UpdateBookStatusCommand;
 import com.hongphat.bookservice.command.event.BookCreateEvent;
 import com.hongphat.bookservice.command.event.BookDeleteEvent;
 import com.hongphat.bookservice.command.event.BookUpdatedEvent;
+import com.hongphat.bookservice.command.event.BookUpdatedStatusEvent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -74,6 +76,22 @@ public class BookAggregate {
 	 * @param command the command
 	 */
 	@CommandHandler
+	public void handle(UpdateBookStatusCommand command) {
+		BookUpdatedStatusEvent event = BookUpdatedStatusEvent
+				.builder()
+				.id(command.getId())
+				.isReady(command.getIsReady())
+				.build();
+
+		AggregateLifecycle.apply(event);
+	}
+
+	/**
+	 * Handle.
+	 *
+	 * @param command the command
+	 */
+	@CommandHandler
 	public void handle(DeleteBookCommand command) {
 		BookDeleteEvent event = BookDeleteEvent
 				.builder()
@@ -106,6 +124,17 @@ public class BookAggregate {
 		this.id = event.getId();
 		this.name = event.getName();
 		this.author = event.getAuthor();
+		this.isReady = event.getIsReady();
+	}
+
+	/**
+	 * On.
+	 *
+	 * @param event the event
+	 */
+	@EventSourcingHandler
+	public void on(BookUpdatedStatusEvent event) {
+		this.id = event.getId();
 		this.isReady = event.getIsReady();
 	}
 

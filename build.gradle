@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.1' apply false
     id 'io.spring.dependency-management' version '1.1.4' apply false
+    id 'com.google.protobuf' version '0.9.4' apply false
 }
 
 ext {
@@ -14,6 +15,11 @@ ext {
     set('lombokVersion', '1.18.30')
     set('axonFrameworkVersion', '4.10.3')
     set('postgresqlVersion', 'latest')
+
+    // gRPC versions
+    set('grpcVersion', '1.42.0')
+    set('protobufVersion', '3.17.3')
+    set('grpcSpringBootVersion', '2.13.1.RELEASE')
 }
 
 allprojects {
@@ -37,6 +43,12 @@ subprojects {
         imports {
             mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
             mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+        dependencies {
+            dependency "io.grpc:grpc-netty-shaded:${grpcVersion}"
+            dependency "io.grpc:grpc-protobuf:${grpcVersion}"
+            dependency "io.grpc:grpc-stub:${grpcVersion}"
+            dependency "com.google.protobuf:protobuf-java:${protobufVersion}"
         }
     }
 }

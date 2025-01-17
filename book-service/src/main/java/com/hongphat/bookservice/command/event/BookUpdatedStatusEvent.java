@@ -1,19 +1,19 @@
-package com.hongphat.borrowservice.command.model.request;
+package com.hongphat.bookservice.command.event;
 
 import lombok.*;
 
 /**
- * BorrowRequest
+ * BookUpdatedStatusEvent
  *
  * @author hongp
  * @description Happy Coding With Phat 😊😊
- * @since 8:20 CH 12/01/2025
+ * @since 7:10 CH 17/01/2025
  */
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BorrowRequest {
-	private String bookId;
-	private String employeeId;
+public class BookUpdatedStatusEvent {
+	private String id;
+	private Boolean isReady;
 }

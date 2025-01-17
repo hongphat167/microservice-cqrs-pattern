@@ -3,6 +3,7 @@ package com.hongphat.bookservice.command.handler;
 import com.hongphat.bookservice.command.event.BookCreateEvent;
 import com.hongphat.bookservice.command.event.BookDeleteEvent;
 import com.hongphat.bookservice.command.event.BookUpdatedEvent;
+import com.hongphat.bookservice.command.event.BookUpdatedStatusEvent;
 import com.hongphat.bookservice.command.model.BookModel;
 import com.hongphat.bookservice.module.factory.IBookFactory;
 import com.hongphat.common_service.enumerate.ErrorCode;
@@ -68,6 +69,16 @@ public class BookEventsHandler {
 			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
 		}
 
+	}
+
+	@EventHandler
+	@DisallowReplay
+	public void handle(BookUpdatedStatusEvent event) {
+		try {
+			iBookFactory.updateIsRead(event);
+		} catch (BusinessException e) {
+			throw new BusinessException(ErrorCode.BUSINESS_ERROR, e.getMessage());
+		}
 	}
 
 	/**

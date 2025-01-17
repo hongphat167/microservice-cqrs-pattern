@@ -38,7 +38,8 @@ public class ExceptionHandle {
 	 */
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<ErrorMessage> handleBusinessException(BusinessException ex) {
-		log.error("Business Exception: {}", ex.getMessage(), ex);
+		log.error("Business Exception - Code: {}, Message: {}, Details: {}",
+				ex.getErrorCode(), ex.getMessage(), ex.getDetails());
 		return buildErrorResponse(ex, ex.getErrorCode());
 	}
 
@@ -125,6 +126,7 @@ public class ExceptionHandle {
 		HttpStatus status = mapErrorCodeToHttpStatus(errorCode);
 		return new ResponseEntity<>(error, status);
 	}
+
 
 	/**
 	 * Map error code to HTTP status

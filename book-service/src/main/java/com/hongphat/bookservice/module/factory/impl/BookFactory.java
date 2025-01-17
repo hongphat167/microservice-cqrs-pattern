@@ -1,11 +1,13 @@
 package com.hongphat.bookservice.module.factory.impl;
 
 import com.hongphat.bookservice.command.event.BookCreateEvent;
+import com.hongphat.bookservice.command.event.BookUpdatedStatusEvent;
 import com.hongphat.bookservice.command.model.BookModel;
 import com.hongphat.bookservice.module.entity.BookEntity;
 import com.hongphat.bookservice.module.factory.IBookFactory;
 import com.hongphat.bookservice.module.repository.IBookRepository;
 import com.hongphat.common_service.common.BaseFactory;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -101,5 +103,15 @@ public class BookFactory extends BaseFactory<
 				.author(model.getAuthor())
 				.isReady(model.getIsReady())
 				.build();
+	}
+
+	@Override
+	public void updateIsRead(BookUpdatedStatusEvent event) {
+		BookEntity entity = repository.findById(event.getId())
+				.orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + event.getId()));
+
+		entity = entity.toBuilder().isReady(event.getIsReady()).build();
+
+		repository.save(entity);
 	}
 }

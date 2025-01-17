@@ -1,6 +1,8 @@
 package com.hongphat.bookservice.query.queries;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 /**
  * @author hongp

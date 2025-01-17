@@ -42,7 +42,12 @@ public enum ErrorCode {
 	/**
 	 * The Business error.
 	 */
-	BUSINESS_ERROR("ERR_400_2", "Business error");
+	BUSINESS_ERROR("ERR_400_2", "Business error"),
+
+	/**
+	 * The Book not available.
+	 */
+	BOOK_NOT_AVAILABLE("ERR_001", "Book is not available for borrowing");
 
 	private final String code;
 	private final String message;

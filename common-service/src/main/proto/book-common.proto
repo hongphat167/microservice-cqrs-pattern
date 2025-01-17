@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option java_package = "com.hongphat.microservice.cqrs.pattern.common.service.grpc";
+package com.hongphat.microservice.common.grpc;
+option java_multiple_files = true;
+
+// Messages
+message GetBookDetailRequest {
+  string bookId = 1;
+}
+
+message GetBookDetailResponse {
+  string id = 1;
+  string name = 2;
+  string author = 3;
+  bool isReady = 4;
+}
+
+message UpdateBookStatusRequest {
+  string id = 1;
+  bool isReady = 2;
+}
+
+message UpdateBookStatusResponse {
+  bool success = 1;
+}
+
+service BookGrpcService {
+  rpc getBookDetail(GetBookDetailRequest) returns (GetBookDetailResponse);
+  rpc updateBookStatus(UpdateBookStatusRequest) returns (UpdateBookStatusResponse);
+}
