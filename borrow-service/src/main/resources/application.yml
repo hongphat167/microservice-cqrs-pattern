@@ -46,3 +46,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
+
+grpc:
+  client:
+    address: localhost:6565
+    keep-alive-time: 10

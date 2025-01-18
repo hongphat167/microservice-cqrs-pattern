@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(':common-service')
+    implementation project(':common-library')
 
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

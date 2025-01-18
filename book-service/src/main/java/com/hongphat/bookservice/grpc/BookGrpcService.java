@@ -4,20 +4,13 @@ import com.hongphat.bookservice.command.command_handling.UpdateBookStatusCommand
 import com.hongphat.bookservice.query.model.response.BookResponseModel;
 import com.hongphat.bookservice.query.queries.GetDetailBookQuery;
 import com.hongphat.common_service.exception.BusinessException;
-import com.hongphat.microservice.cqrs.pattern.common.service.grpc.*;
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
+import com.hongphat.common_service.proto.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.queryhandling.QueryGateway;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * BookGrpcService
@@ -27,12 +20,11 @@ import java.util.concurrent.TimeUnit;
  * @since 9 :41 CH 14/01/2025
  */
 @Slf4j
-@Component
+@GrpcService
 public class BookGrpcService extends BookGrpcServiceGrpc.BookGrpcServiceImplBase {
 
 	private final QueryGateway queryGateway;
 	private final CommandGateway commandGateway;
-	private Server grpcServer;
 
 	/**
 	 * Instantiates a new Book grpc service.
@@ -44,49 +36,6 @@ public class BookGrpcService extends BookGrpcServiceGrpc.BookGrpcServiceImplBase
 	                          CommandGateway commandGateway) {
 		this.queryGateway = queryGateway;
 		this.commandGateway = commandGateway;
-	}
-
-	/**
-	 * Start grpc server.
-	 */
-	@PostConstruct
-	public void startGrpcServer() {
-		try {
-			grpcServer = ServerBuilder.forPort(6565)
-					.addService(this)
-					.build()
-					.start();
-
-			log.info("gRPC Server started on port 6565");
-
-			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-				log.info("Shutting down gRPC server");
-				if (grpcServer != null) {
-					grpcServer.shutdown();
-				}
-				log.info("gRPC server shut down successfully");
-			}));
-
-		} catch (IOException e) {
-			log.error("Failed to start gRPC server", e);
-			throw new RuntimeException("Failed to start gRPC server", e);
-		}
-	}
-
-	/**
-	 * Stop grpc server.
-	 */
-	@PreDestroy
-	public void stopGrpcServer() {
-		if (grpcServer != null) {
-			grpcServer.shutdown();
-			try {
-				grpcServer.awaitTermination(30, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				log.error("Error while shutting down gRPC server", e);
-				Thread.currentThread().interrupt();
-			}
-		}
 	}
 
 	@Override

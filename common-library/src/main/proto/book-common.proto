@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-option java_package = "com.hongphat.microservice.cqrs.pattern.common.service.grpc";
-package com.hongphat.microservice.common.grpc;
+option java_package = "com.hongphat.common_service.proto";
+package com.hongphat.common_service;
 option java_multiple_files = true;
 
 // Messages
