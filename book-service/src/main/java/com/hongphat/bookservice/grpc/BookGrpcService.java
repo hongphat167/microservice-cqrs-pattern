@@ -21,7 +21,7 @@ import org.axonframework.queryhandling.QueryGateway;
  */
 @Slf4j
 @GrpcService
-public class BookGrpcService extends BookGrpcServiceGrpc.BookGrpcServiceImplBase {
+public class BookGrpcService extends CommonServiceGrpc.CommonServiceImplBase {
 
 	private final QueryGateway queryGateway;
 	private final CommandGateway commandGateway;

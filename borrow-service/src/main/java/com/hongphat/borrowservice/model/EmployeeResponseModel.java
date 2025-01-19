@@ -3,19 +3,20 @@ package com.hongphat.borrowservice.model;
 import lombok.*;
 
 /**
- * BookResponseModel
+ * EmployeeResponseModel
  *
  * @author hongp
  * @description Happy Coding With Phat 😊😊
- * @since 10:07 CH 14/01/2025
+ * @since 10 :09 CH 18/01/2025
  */
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookResponseModel {
+public class EmployeeResponseModel {
 	private String id;
-	private String name;
-	private String author;
-	private Boolean isReady;
+	private String firstName;
+	private String lastName;
+	private String kin;
+	private Boolean isDisciplined;
 }

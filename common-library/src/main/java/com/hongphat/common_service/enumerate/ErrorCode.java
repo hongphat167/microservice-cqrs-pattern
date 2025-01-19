@@ -47,7 +47,12 @@ public enum ErrorCode {
 	/**
 	 * The Book not available.
 	 */
-	BOOK_NOT_AVAILABLE("ERR_001", "Book is not available for borrowing");
+	BOOK_NOT_AVAILABLE("ERR_001", "Book is not available for borrowing"),
+
+	/**
+	 * The Employee is disciplined.
+	 */
+	EMPLOYEE_IS_DISCIPLINED("ERR_001","Employee is disciplined");
 
 	private final String code;
 	private final String message;

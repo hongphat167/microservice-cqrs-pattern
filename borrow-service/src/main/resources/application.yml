@@ -49,5 +49,9 @@ eureka:
 
 grpc:
   client:
-    address: localhost:6565
-    keep-alive-time: 10
+    bookservice:
+      address: localhost:6565
+      keep-alive-time: 10
+    employeeservice:
+      address: localhost:5656
+      keep-alive-time: 10

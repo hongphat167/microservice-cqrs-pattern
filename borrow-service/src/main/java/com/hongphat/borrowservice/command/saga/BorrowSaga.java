@@ -2,27 +2,22 @@ package com.hongphat.borrowservice.command.saga;
 
 import com.hongphat.borrowservice.command.command_handling.DeleteBorrowCommand;
 import com.hongphat.borrowservice.command.event.CreateBorrowEvent;
+import com.hongphat.borrowservice.command.event.DeleteBorrowEvent;
 import com.hongphat.borrowservice.command.event.UpdateBookStatusEvent;
-import com.hongphat.borrowservice.grpc_client.BookGrpcClient;
+import com.hongphat.borrowservice.grpc.client.BorrowGrpcClient;
 import com.hongphat.borrowservice.model.BookResponseModel;
+import com.hongphat.borrowservice.model.EmployeeResponseModel;
 import com.hongphat.common_service.enumerate.ErrorCode;
 import com.hongphat.common_service.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.modelling.saga.EndSaga;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.SagaLifecycle;
 import org.axonframework.modelling.saga.StartSaga;
-import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * BorrowingSaga
- *
- * @author hongp
- * @description Happy Coding With Phat 😊😊
- * @since 9 :12 CH 14/01/2025
- */
 @Saga
 @Slf4j
 public class BorrowSaga {
@@ -30,53 +25,89 @@ public class BorrowSaga {
 	private transient CommandGateway commandGateway;
 
 	@Autowired
-	private transient QueryGateway queryGateway;
+	private transient BorrowGrpcClient borrowGrpcClient;
 
-	@Autowired
-	private transient BookGrpcClient bookGrpcClient;
+	private String currentBookId;
+	private String currentEmployeeId;
+	private boolean isRollbackInProgress = false;
+	private boolean needRollbackStatus = false;
 
-	// Empty constructor required by Axon
 	public BorrowSaga() {
-		// Required empty constructor
 	}
 
 	@StartSaga
 	@SagaEventHandler(associationProperty = "id")
 	private void handle(CreateBorrowEvent event) {
 		log.info("Borrowed in saga for BookId: {} and EmployeeId: {}", event.getBookId(), event.getEmployeeId());
-		try {
-			BookResponseModel model = bookGrpcClient.getBookDetail(event.getBookId());
 
-			if (!model.getIsReady()) {
-				log.info("Book {} is not ready", event.getBookId());
-				throw new BusinessException(ErrorCode.BOOK_NOT_AVAILABLE,
-						String.format("Book %s is not available for borrowing", event.getBookId()));
-			}
-			SagaLifecycle.associateWith("bookId", event.getBookId());
-			bookGrpcClient.updateBookStatus(event.getBookId(), false);
-		} catch (BusinessException e) {
-			rollbackBorrowRecord(event.getId());
+		this.currentBookId = event.getBookId();
+		this.currentEmployeeId = event.getEmployeeId();
+		BookResponseModel model = borrowGrpcClient.getBookDetail(event.getBookId());
+
+		if (!model.getIsReady()) {
+			log.info("Book {} is not ready", event.getBookId());
+			rollBackBorrowRecordOnly(event.getId());
+			throw new BusinessException(ErrorCode.BOOK_NOT_AVAILABLE,
+					ErrorCode.BOOK_NOT_AVAILABLE.getMessage());
 		}
+
+		needRollbackStatus = true;
+		SagaLifecycle.associateWith("bookId", event.getBookId());
+		borrowGrpcClient.updateBookStatus(
+				event.getBookId(),
+				false,
+				event.getEmployeeId()
+		);
 	}
 
+	@EndSaga
 	@SagaEventHandler(associationProperty = "bookId")
 	private void handle(UpdateBookStatusEvent event) {
-		log.info("Book status updated for bookId: {}", event.getBookId());
-		if (!event.getIsReady()) {
-			log.info("Ending saga for bookId: {}", event.getBookId());
-			SagaLifecycle.end();
-		} else {
-			log.error("Failed to update book status for bookId: {}", event.getBookId());
-			throw new BusinessException(ErrorCode.BUSINESS_ERROR, "Failed to update book status");
+		if (isRollbackInProgress) {
+			log.info("Rollback completed for book: {}", event.getBookId());
+			return;
+		}
+
+		log.info("Check employee is disciplined for employeeId: {}", event.getEmployeeId());
+		try {
+			EmployeeResponseModel model = borrowGrpcClient.getEmployeeDetail(event.getEmployeeId());
+
+			if (!model.getIsDisciplined()) {
+				log.info("Employee {} is not disciplined", event.getEmployeeId());
+				handleFullRollback(currentBookId, currentEmployeeId);
+				throw new BusinessException(ErrorCode.EMPLOYEE_IS_DISCIPLINED,
+						ErrorCode.EMPLOYEE_IS_DISCIPLINED.getMessage());
+			}
+			log.info("Book {} is borrowing with employee {}", event.getBookId(), event.getEmployeeId());
+		} catch (BusinessException e) {
+			handleFullRollback(currentBookId, currentEmployeeId);
 		}
 	}
 
-	private void rollbackBorrowRecord(String id) {
-		DeleteBorrowCommand command = DeleteBorrowCommand.builder()
-				.id(id)
-				.build();
+	@EndSaga
+	@SagaEventHandler(associationProperty = "id")
+	private void handle(DeleteBorrowEvent event) {
+		log.info("Book rollback event in Saga: {}", event.getId());
+	}
 
+	private void rollBackBorrowRecordOnly(String borrowId) {
+		log.info("Rolling back borrow record only for id: {}", borrowId);
+		DeleteBorrowCommand command = DeleteBorrowCommand.builder()
+				.id(borrowId)
+				.build();
 		commandGateway.sendAndWait(command);
-		SagaLifecycle.end();
+	}
+
+	private void handleFullRollback(String bookId, String employeeId) {
+		isRollbackInProgress = true;
+
+		if (needRollbackStatus && bookId != null) {
+			log.info("Rolling back book status for bookId: {}", bookId);
+			borrowGrpcClient.updateBookStatus(bookId, true, employeeId);
+		}
+
+		if (currentBookId != null) {
+			rollBackBorrowRecordOnly(currentBookId);
+		}
 	}
 }

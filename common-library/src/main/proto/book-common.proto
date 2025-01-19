@@ -4,7 +4,12 @@ option java_package = "com.hongphat.common_service.proto";
 package com.hongphat.common_service;
 option java_multiple_files = true;
 
-// Messages
+service CommonService {
+  rpc getBookDetail(GetBookDetailRequest) returns (GetBookDetailResponse);
+  rpc updateBookStatus(UpdateBookStatusRequest) returns (UpdateBookStatusResponse);
+  rpc getEmployeeDetail(GetDetailEmployeeRequest) returns (GetDetailEmployeeResponse);
+}
+
 message GetBookDetailRequest {
   string bookId = 1;
 }
@@ -25,7 +30,14 @@ message UpdateBookStatusResponse {
   bool success = 1;
 }
 
-service BookGrpcService {
-  rpc getBookDetail(GetBookDetailRequest) returns (GetBookDetailResponse);
-  rpc updateBookStatus(UpdateBookStatusRequest) returns (UpdateBookStatusResponse);
+message GetDetailEmployeeRequest {
+  string employeeId = 1;
+}
+
+message GetDetailEmployeeResponse {
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string kin = 4;
+  bool isDisciplined = 5;
 }

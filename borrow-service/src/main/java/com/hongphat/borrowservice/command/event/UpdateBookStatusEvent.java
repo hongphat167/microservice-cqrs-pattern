@@ -15,5 +15,6 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdateBookStatusEvent {
 	private String bookId;
+	private String employeeId;
 	private Boolean isReady;
 }

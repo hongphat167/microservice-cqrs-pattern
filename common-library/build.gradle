@@ -62,10 +62,22 @@ sourceSets {
     }
 }
 
-clean {
-    delete protobuf.generatedFilesBaseDir
+task cleanProto(type: Delete) {
+    delete fileTree("build/generated/source/proto") {
+        include '**/*'
+    }
+    delete fileTree("build/extracted-protos") {
+        include '**/*'
+    }
+    delete fileTree("build/extracted-include-protos") {
+        include '**/*'
+    }
+    doLast {
+        println "✨ Cleaned all generated proto files"
+    }
 }
 
+clean.dependsOn cleanProto
 
 tasks.withType(Copy).configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
