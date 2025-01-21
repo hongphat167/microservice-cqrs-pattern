@@ -1,0 +1,153 @@
+services:
+  eureka-server:
+    build:
+      context: .
+      dockerfile: config-service/Dockerfile
+    ports:
+      - "8761:8761"
+    environment:
+      EUREKA_CLIENT_REGISTER-WITH-EUREKA: 'false'
+      EUREKA_CLIENT_FETCH-REGISTRY: 'false'
+    networks:
+      - app_network
+
+  axon-server:
+    image: axoniq/axonserver:latest
+    hostname: axon-server
+    volumes:
+      - axon-data:/data
+      - axon-events:/eventdata
+      - axon-config:/config
+    ports:
+      - "8024:8024"
+      - "8124:8124"
+    networks:
+      - app_network
+
+  borrow-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: borrowService
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - borrow-pgdata:/var/lib/postgresql/data
+    ports:
+      - "8386:5432"
+    networks:
+      - app_network
+
+  book-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: bookService
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - book-pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+
+  employee-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: employeeService
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - employee-pgdata:/var/lib/postgresql/data
+    ports:
+      - "4141:5432"
+    networks:
+      - app_network
+
+  borrow-service:
+    build:
+      context: .
+      dockerfile: borrow-service/Dockerfile
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://borrow-db:5432/borrowService
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      AXON_AXONSERVER_SERVERS: axon-server:8124
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      EUREKA_INSTANCE_PREFERIPADDRESS: 'true'
+      GRPC_BOOK_SERVICE_ADDRESS: book-service:6565
+      GRPC_EMPLOYEE_SERVICE_ADDRESS: employee-service:5656
+    ports:
+      - "9396:9396"
+    depends_on:
+      - borrow-db
+      - axon-server
+      - eureka-server
+    networks:
+      - app_network
+
+  book-service:
+    build:
+      context: .
+      dockerfile: book-service/Dockerfile
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://book-db:5432/bookService
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      AXON_AXONSERVER_SERVERS: axon-server:8124
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      EUREKA_INSTANCE_PREFERIPADDRESS: 'true'
+    ports:
+      - "9001:9001"
+      - "6565:6565"
+    expose:
+      - "6565"
+    depends_on:
+      - book-db
+      - axon-server
+      - eureka-server
+    networks:
+      - app_network
+
+  employee-service:
+    build:
+      context: .
+      dockerfile: employee-service/Dockerfile
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://employee-db:5432/employeeService
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      AXON_AXONSERVER_SERVERS: axon-server:8124
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      EUREKA_INSTANCE_PREFERIPADDRESS: 'true'
+    ports:
+      - "8283:8283"
+      - "5656:5656"
+    expose:
+      - "5656"
+    depends_on:
+      - employee-db
+      - axon-server
+      - eureka-server
+    networks:
+      - app_network
+
+volumes:
+  employee-pgdata:
+  borrow-pgdata:
+  book-pgdata:
+  axon-data:
+  axon-events:
+  axon-config:
+
+networks:
+  app_network:
+    driver: bridge

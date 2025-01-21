@@ -18,20 +18,28 @@ import org.axonframework.modelling.saga.StartSaga;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * The type Borrow saga.
+ */
 @Saga
 @Slf4j
 public class BorrowSaga {
+
 	@Autowired
 	private transient CommandGateway commandGateway;
 
 	@Autowired
 	private transient BorrowGrpcClient borrowGrpcClient;
 
+	private String borrowId;
 	private String currentBookId;
 	private String currentEmployeeId;
 	private boolean isRollbackInProgress = false;
 	private boolean needRollbackStatus = false;
 
+	/**
+	 * Instantiates a new Borrow saga.
+	 */
 	public BorrowSaga() {
 	}
 
@@ -40,13 +48,15 @@ public class BorrowSaga {
 	private void handle(CreateBorrowEvent event) {
 		log.info("Borrowed in saga for BookId: {} and EmployeeId: {}", event.getBookId(), event.getEmployeeId());
 
+		this.borrowId = event.getId();
 		this.currentBookId = event.getBookId();
 		this.currentEmployeeId = event.getEmployeeId();
+
 		BookResponseModel model = borrowGrpcClient.getBookDetail(event.getBookId());
 
 		if (!model.getIsReady()) {
 			log.info("Book {} is not ready", event.getBookId());
-			rollBackBorrowRecordOnly(event.getId());
+			rollBackBorrowRecordOnly(this.borrowId);
 			throw new BusinessException(ErrorCode.BOOK_NOT_AVAILABLE,
 					ErrorCode.BOOK_NOT_AVAILABLE.getMessage());
 		}
@@ -74,13 +84,13 @@ public class BorrowSaga {
 
 			if (!model.getIsDisciplined()) {
 				log.info("Employee {} is not disciplined", event.getEmployeeId());
-				handleFullRollback(currentBookId, currentEmployeeId);
+				handleFullRollback(event.getBookId(), event.getEmployeeId());
 				throw new BusinessException(ErrorCode.EMPLOYEE_IS_DISCIPLINED,
 						ErrorCode.EMPLOYEE_IS_DISCIPLINED.getMessage());
 			}
 			log.info("Book {} is borrowing with employee {}", event.getBookId(), event.getEmployeeId());
 		} catch (BusinessException e) {
-			handleFullRollback(currentBookId, currentEmployeeId);
+			handleFullRollback(event.getBookId(), event.getEmployeeId());
 		}
 	}
 
@@ -106,8 +116,8 @@ public class BorrowSaga {
 			borrowGrpcClient.updateBookStatus(bookId, true, employeeId);
 		}
 
-		if (currentBookId != null) {
-			rollBackBorrowRecordOnly(currentBookId);
+		if (this.borrowId != null) {
+			rollBackBorrowRecordOnly(this.borrowId);
 		}
 	}
 }

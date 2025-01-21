@@ -50,8 +50,8 @@ eureka:
 grpc:
   client:
     bookservice:
-      address: localhost:6565
+      address: ${GRPC_BOOK_SERVICE_ADDRESS:localhost:6565}
       keep-alive-time: 10
     employeeservice:
-      address: localhost:5656
+      address: ${GRPC_EMPLOYEE_SERVICE_ADDRESS:localhost:5656}
       keep-alive-time: 10
