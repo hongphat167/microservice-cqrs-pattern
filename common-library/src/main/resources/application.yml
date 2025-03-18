@@ -6,6 +6,8 @@ spring:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
     consumer:
       group-id: ${KAFKA_GROUP_ID:default-group}
+      auto-offset-reset: earliest
+      enable-auto-commit: false
 
   mail:
     host: smtp.gmail.com

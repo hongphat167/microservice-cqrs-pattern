@@ -1,4 +1,4 @@
-package com.hongphat.authservice.command.event;
+package com.hongphat.common_service.model;
 
 import lombok.*;
 
@@ -7,9 +7,8 @@ import lombok.*;
  * EmailEvent
  *
  * @author: phatthh
- * @since: 16/03/2025
- * @description: Dự án microservice của Phát
- * --------------------------------------------------------
+ * @since: 16 /03/2025
+ * @description: Dự án microservice của Phát --------------------------------------------------------
  */
 @Getter
 @Builder(toBuilder = true)
@@ -22,8 +21,17 @@ public class EmailEvent {
     private boolean isHtml;
     private EmailType type;
 
+    /**
+     * The enum Email type.
+     */
     public enum EmailType {
+        /**
+         * Registration email type.
+         */
         REGISTRATION,
+        /**
+         * Password reset email type.
+         */
         PASSWORD_RESET
     }
 }

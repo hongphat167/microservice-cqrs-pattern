@@ -2,13 +2,13 @@ package com.hongphat.authservice.command.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hongphat.authservice.command.event.EmailEvent;
 import com.hongphat.authservice.command.event.PasswordResetRequestedEvent;
 import com.hongphat.authservice.command.event.UserRegisteredEvent;
 import com.hongphat.authservice.command.model.UserModel;
 import com.hongphat.authservice.module.factory.IUserFactory;
 import com.hongphat.common_service.enumerate.ErrorCode;
 import com.hongphat.common_service.exception.BusinessException;
+import com.hongphat.common_service.model.EmailEvent;
 import com.hongphat.common_service.service.KafkaService;
 import org.axonframework.eventhandling.DisallowReplay;
 import org.axonframework.eventhandling.EventHandler;
