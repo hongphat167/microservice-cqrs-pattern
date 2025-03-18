@@ -34,7 +34,11 @@ public interface IBookQueryController {
 	@GetMapping("{bookId}")
 	BookResponseModel getBookById(@PathVariable String bookId);
 
+    /**
+     * Send message.
+     *
+     * @param message the message
+     */
 	@PostMapping("/sendMessage")
-	public void sendMessage(@RequestBody String message);
-
+    void sendMessage(@RequestBody String message);
 }

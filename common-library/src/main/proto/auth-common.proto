@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_package = "com.hongphat.common_service.proto";
+package com.hongphat.common_service;
+option java_multiple_files = true;
+
+service AuthService {
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+}
+
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+message ValidateTokenResponse {
+  bool valid = 1;
+  string userId = 2;
+  string username = 3;
+  repeated string roles = 4;
+  string error = 5;
+}

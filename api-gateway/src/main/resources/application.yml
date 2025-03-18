@@ -11,6 +11,24 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        - id: authservice
+          uri: lb://authservice
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - RewritePath=/api/v1/auth/(?<segment>.*), /api/v1/auth/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: authService
+                fallbackUri: forward:/fallback/authservice
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@keyResolver}"
+            - name: KeyAuthFilter
+
         - id: employeeservice
           uri: lb://employeeservice
           predicates:
@@ -28,7 +46,9 @@ spring:
                 redis-rate-limiter.requestedTokens: 1
                 key-resolver: "#{@keyResolver}"
             - name: KeyAuthFilter
+            - name: JwtAuthFilter
 
+        # Similar updates for bookservice and borrowservice
         - id: bookservice
           uri: lb://bookservice
           predicates:
@@ -46,6 +66,7 @@ spring:
                 redis-rate-limiter.requestedTokens: 1
                 key-resolver: "#{@keyResolver}"
             - name: KeyAuthFilter
+            - name: JwtAuthFilter
 
         - id: borrowservice
           uri: lb://borrowservice
@@ -64,26 +85,9 @@ spring:
                 redis-rate-limiter.requestedTokens: 1
                 key-resolver: "#{@keyResolver}"
             - name: KeyAuthFilter
+            - name: JwtAuthFilter
 
-  # Add Redis configuration
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password: mypassword
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    reactor.netty: DEBUG
-
-eureka:
-  instance:
-    hostname: localhost
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-
-apiKey: hongphat
+# Add JWT configuration
+app:
+  jwt:
+    secret: akdbakjnlkanscknajhf8q27897987s9fnfkxckjvn

@@ -21,3 +21,5 @@ include 'employee-service'
 include 'api-gateway'
 include 'notification-service'
 include 'borrow-service'
+include 'auth-service'
+

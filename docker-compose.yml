@@ -1,3 +1,4 @@
+version: '2'
 services:
   eureka-server:
     build:
@@ -6,8 +7,8 @@ services:
     ports:
       - "8761:8761"
     environment:
-      EUREKA_CLIENT_REGISTER-WITH-EUREKA: 'false'
-      EUREKA_CLIENT_FETCH-REGISTRY: 'false'
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: 'false'
+      EUREKA_CLIENT_FETCH_REGISTRY: 'false'
     networks:
       - app_network
 
@@ -63,6 +64,69 @@ services:
       - employee-pgdata:/var/lib/postgresql/data
     ports:
       - "4141:5432"
+    networks:
+      - app_network
+
+  auth-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: authService
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - auth-pgdata:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    networks:
+      - app_network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+    networks:
+      - app_network
+
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - "9092:9092"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      # Listeners configuration - important for connectivity
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      # Additional configurations
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    volumes:
+      - kafka_data:/bitnami
+    networks:
+      - app_network
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    restart: always
+    environment:
+      KAFKA_BOOTSTRAP_SERVER: kafka:9092
+      SPRING_MAIL_USERNAME: hogphat1607@gmail.com
+      SPRING_MAIL_PASSWORD: qpfmilrxltrdorhr
+    ports:
+      - "9003:9003"
+    depends_on:
+      - kafka
     networks:
       - app_network
 
@@ -140,13 +204,62 @@ services:
     networks:
       - app_network
 
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://auth-db:5432/authService
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      AXON_AXONSERVER_SERVERS: axon-server:8124
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      EUREKA_INSTANCE_PREFERIPADDRESS: 'true'
+      KAFKA_BOOTSTRAP_SERVER: localhost:9092
+      APP_FRONTEND_URL: http://localhost:3000
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: hogphat1607@gmail.com
+      SPRING_MAIL_PASSWORD: qpfmilrxltrdorhr
+      # Thêm các cấu hình Kafka connection timeout
+      SPRING_KAFKA_PROPERTIES_REQUEST_TIMEOUT_MS: 30000
+      SPRING_KAFKA_PROPERTIES_RETRY_BACKOFF_MS: 1000
+    ports:
+      - "9004:9004"
+      - "7575:7575"
+    expose:
+      - "7575"
+    depends_on:
+      - auth-db
+      - axon-server
+      - eureka-server
+      - kafka
+    networks:
+      - app_network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8090:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      - kafka
+    networks:
+      - app_network
+
 volumes:
   employee-pgdata:
   borrow-pgdata:
   book-pgdata:
+  auth-pgdata:
   axon-data:
   axon-events:
   axon-config:
+  kafka_data:
 
 networks:
   app_network:

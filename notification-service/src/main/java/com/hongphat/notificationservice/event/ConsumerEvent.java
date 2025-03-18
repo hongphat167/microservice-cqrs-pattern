@@ -46,8 +46,7 @@ public class ConsumerEvent {
 	 */
 	@RetryableTopic(
 			attempts = "5", // 4 topic + 1 Dead Letter Queue
-			backoff = @Backoff(delay = 1000, multiplier = 2), // Retry first 1s and then delay*multiplier
-			autoCreateTopics = "true",
+			backoff = @Backoff(delay = 1000, multiplier = 2),
 			dltStrategy = DltStrategy.FAIL_ON_ERROR,
 			include = {RetriableException.class, RuntimeException.class}
 	)
@@ -71,7 +70,7 @@ public class ConsumerEvent {
 		log.info("Received email message: {}", message);
 
 		String personalizedContent = EMAIL_TEMPLATE
-				.replace("%recipient_name%", "Hồng Phát") // Hoặc lấy từ message
+				.replace("%recipient_name%", "Hồng Phát")
 				.replace("%notification_content%", "bạn đã nhận được một phần quà trị giá 10,000,000 đồng")
 				.replace("%timestamp%", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")))
 				.replace("%reference_code%", "REF-" + UUID.randomUUID().toString().substring(0, 8))
